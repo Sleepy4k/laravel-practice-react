@@ -16,9 +16,9 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = new NewsCollection(News::paginate(20));
+        $news = new NewsCollection(News::latest()->paginate(20));
 
-        return Inertia::render('Homepage', [
+        return Inertia::render('News/Index', [
             'title' => 'Laravel React SPA',
             'description' => 'Laravel React SPA with Inertia.js',
             'news' => $news
@@ -43,7 +43,22 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = validator($request->all(), [
+            'title' => ['required','string','max:255','unique:news,title'],
+            'description' => ['required','string'],
+            'category' => ['required','string','max:255']
+        ]);
+        
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
+        $validated['author'] = auth()->user()->email;
+
+        News::create($validated)->save();
+
+        return back()->with('message', 'News created successfully!');
     }
 
     /**
@@ -54,7 +69,11 @@ class NewsController extends Controller
      */
     public function show(News $news)
     {
-        //
+        $newsList = $news::where('author', auth()->user()->email)->get();
+
+        return Inertia::render('Dashboard', [
+            'newsList' => $newsList
+        ]);
     }
 
     /**
@@ -65,7 +84,9 @@ class NewsController extends Controller
      */
     public function edit(News $news)
     {
-        //
+        return Inertia::render('News/Edit', [
+            'newsData' => $news
+        ]);
     }
 
     /**
@@ -77,7 +98,23 @@ class NewsController extends Controller
      */
     public function update(Request $request, News $news)
     {
-        //
+        $validator = validator($request->all(), [
+            'title' => ['required','string','max:255','unique:news,title,'.$news->id],
+            'description' => ['required','string'],
+            'category' => ['required','string','max:255']
+        ]);
+        
+        if ($validator->fails()) {
+            dd($validator->errors());
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
+        $validated['author'] = auth()->user()->email;
+
+        News::find($news->id)->update($validated);
+
+        return to_route('dashboard')->with('message', 'News updated successfully!');
     }
 
     /**
@@ -88,6 +125,8 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-        //
+        News::find($news->id)->delete();
+
+        return back()->with('message', 'News deleted successfully!');
     }
 }

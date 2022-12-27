@@ -19,23 +19,23 @@ use App\Http\Controllers\ProfileController;
 
 Route::get('/', [NewsController::class, 'index']);
 
-Route::get('/welcome', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Dashboard
+    Route::get('dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->middleware('verified')->name('dashboard');
+
+    // Profile
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // News
+    Route::get('news', [NewsController::class, 'show'])->name('news.show');
+    Route::post('news', [NewsController::class, 'store'])->name('news.store');
+    Route::get('news/{news}', [NewsController::class, 'edit'])->name('news.edit');
+    Route::put('news/{news}', [NewsController::class, 'update'])->name('news.update');
+    Route::delete('news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
 });
 
 require __DIR__.'/auth.php';
