@@ -1,4 +1,4 @@
-export default function PrimaryButton({ type = 'submit', className = '', processing, children, onClick }) {
+const PrimaryButton = ({ type = 'submit', className = '', processing, children, onClick }) => {
     return (
         <button
             type={type}
@@ -12,5 +12,7 @@ export default function PrimaryButton({ type = 'submit', className = '', process
         >
             {children}
         </button>
-    );
+    )
 }
+
+export default PrimaryButton

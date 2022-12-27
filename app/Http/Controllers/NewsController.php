@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Http\Resources\NewsCollection;
 
 class NewsController extends Controller
 {
@@ -15,7 +16,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = News::get();
+        $news = new NewsCollection(News::paginate(20));
 
         return Inertia::render('Homepage', [
             'title' => 'Laravel React SPA',

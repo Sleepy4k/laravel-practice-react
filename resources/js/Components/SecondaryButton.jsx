@@ -1,4 +1,4 @@
-export default function SecondaryButton({ type = 'button', className = '', processing, children, onClick }) {
+const SecondaryButton = ({ type = 'button', className = '', processing, children, onClick }) => {
     return (
         <button
             type={type}
@@ -12,5 +12,7 @@ export default function SecondaryButton({ type = 'button', className = '', proce
         >
             {children}
         </button>
-    );
+    )
 }
+
+export default SecondaryButton

@@ -15,7 +15,7 @@ class NewsSeeder extends Seeder
     public function run()
     {
         if (News::count() == 0) {
-            $grades = News::factory(10)->make();
+            $grades = News::factory(50)->make();
 
             News::insert($grades->toArray());
         }
